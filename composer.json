@@ -33,9 +33,6 @@
         "symfony/phpunit-bridge": "^3.3 || ^4.0",
         "matthiasnoback/symfony-dependency-injection-test": "^2.3"
     },
-    "suggest": {
-        "graphaware/neo4j-php-ogm": "To have EntityManager support"
-    },
     "autoload": {
         "psr-4": {
             "Neo4j\\Neo4jBundle\\": ""
