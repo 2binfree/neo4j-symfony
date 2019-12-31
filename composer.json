@@ -14,10 +14,16 @@
             "email": "xavier@pandawan-technology.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/2binfree/neo4j-php-client"
+        }
+    ],
     "require": {
         "php": "^7.0",
         "graphaware/neo4j-bolt": "^1.6",
-        "graphaware/neo4j-php-client": "^4.6.4",
+        "graphaware/neo4j-php-client": "dev-master",
         "symfony/dependency-injection": " ^2.8.3 || ^3.0.3 || ^4.0",
         "symfony/framework-bundle": "^2.8.32 || ^3.0 || ^4.0",
         "symfony/http-kernel": "^2.8 || ^3.0 || ^4.0",
