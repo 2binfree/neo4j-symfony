@@ -22,8 +22,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "graphaware/neo4j-bolt": "^1.6",
-        "tobinfree/neo4j-php-client": "dev-master",
+        "stefanak-michal/bolt": "^1.1",
+        "tobinfree/neo4j-php-client": "^4.8.5",
         "symfony/dependency-injection": " ^2.8.3 || ^3.0.3 || ^4.0",
         "symfony/framework-bundle": "^2.8.32 || ^3.0 || ^4.0",
         "symfony/http-kernel": "^2.8 || ^3.0 || ^4.0",
