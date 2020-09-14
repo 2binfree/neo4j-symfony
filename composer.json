@@ -18,11 +18,15 @@
         {
             "type": "vcs",
             "url": "https://github.com/2binfree/neo4j-php-client"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/2binfree/neo4j-bolt-php"
         }
     ],
     "require": {
         "php": "^7.0",
-        "stefanak-michal/bolt": "^1.1",
+        "graphaware/neo4j-bolt": "^1.5",
         "tobinfree/neo4j-php-client": "^4.8.6",
         "symfony/dependency-injection": " ^2.8.3 || ^3.0.3 || ^4.0",
         "symfony/framework-bundle": "^2.8.32 || ^3.0 || ^4.0",
