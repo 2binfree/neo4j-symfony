@@ -25,9 +25,9 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "tobinfree/neo4j-bolt": "^1.5",
-        "tobinfree/neo4j-php-client": "^4.8.6",
+        "php": "^8.2",
+        "tobinfree/neo4j-bolt": "^1.11.2",
+        "tobinfree/neo4j-php-client": "^4.8.8",
         "symfony/dependency-injection": " ^2.8.3 || ^3.0.3 || ^4.0",
         "symfony/framework-bundle": "^2.8.32 || ^3.0 || ^4.0",
         "symfony/http-kernel": "^2.8 || ^3.0 || ^4.0",
@@ -35,7 +35,7 @@
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.3 || ^4.0",
-        "matthiasnoback/symfony-dependency-injection-test": "^2.3"
+        "matthiasnoback/symfony-dependency-injection-test": "^4.3"
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +43,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "scripts": {
         "test": "vendor/bin/simple-phpunit",
