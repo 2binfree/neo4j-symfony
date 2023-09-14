@@ -4,7 +4,6 @@ namespace Neo4j\Neo4jBundle\Tests\Functional;
 
 use GraphAware\Neo4j\Client\ClientInterface;
 use GraphAware\Neo4j\Client\Connection\Connection;
-use GraphAware\Neo4j\OGM\EntityManager;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>

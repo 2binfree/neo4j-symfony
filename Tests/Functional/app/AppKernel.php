@@ -2,7 +2,10 @@
 
 namespace Neo4j\Neo4jBundle\Tests\Functional\app;
 
+use Exception;
 use Neo4j\Neo4jBundle\Neo4jBundle;
+use RuntimeException;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -11,7 +14,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
-    private $config;
+    private mixed $config;
 
     public function __construct($config)
     {
@@ -24,26 +27,29 @@ class AppKernel extends Kernel
         }
 
         if (!file_exists($config)) {
-            throw new \RuntimeException(sprintf('The config file "%s" does not exist', $config));
+            throw new RuntimeException(sprintf('The config file "%s" does not exist', $config));
         }
 
         $this->config = $config;
     }
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new FrameworkBundle(),
             new Neo4jBundle(),
         ];
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    /**
+     * @throws Exception
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load($this->config);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/Neo4jBundle';
     }
@@ -53,12 +59,12 @@ class AppKernel extends Kernel
         return $this->config;
     }
 
-    public function unserialize($config)
+    public function unserialize($config): void
     {
         $this->__construct($config);
     }
 
-    protected function build(ContainerBuilder $container)
+    protected function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new PublicServicesForFunctionalTestsPass());
     }
@@ -66,7 +72,7 @@ class AppKernel extends Kernel
 
 class PublicServicesForFunctionalTestsPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $aliases = [
             'neo4j.connection',

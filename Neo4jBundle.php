@@ -3,6 +3,7 @@
 namespace Neo4j\Neo4jBundle;
 
 use Neo4j\Neo4jBundle\DependencyInjection\Neo4jExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -12,7 +13,7 @@ class Neo4jBundle extends Bundle
 {
     private $autoloader;
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new Neo4jExtension();
     }
@@ -24,7 +25,7 @@ class Neo4jBundle extends Bundle
             // See https://github.com/symfony/symfony/pull/3419 for usage of references
             $container = &$this->container;
             $this->autoloader = function ($class) use (&$container) {
-                if (0 === strpos($class, 'neo4j_ogm_proxy')) {
+                if (str_starts_with($class, 'neo4j_ogm_proxy')) {
                     $cacheDir = $container->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'neo4j';
                     $file = $cacheDir.DIRECTORY_SEPARATOR.$class.'.php';
                     if (file_exists($file)) {
@@ -36,7 +37,7 @@ class Neo4jBundle extends Bundle
         }
     }
 
-    public function shutdown()
+    public function shutdown(): void
     {
         if (null === $this->autoloader) {
             return;
