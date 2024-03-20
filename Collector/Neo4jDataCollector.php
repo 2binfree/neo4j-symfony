@@ -16,7 +16,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * @var QueryLogger
      */
-    private $queryLogger;
+    private QueryLogger $queryLogger;
 
     public function __construct(QueryLogger $logger)
     {
@@ -26,7 +26,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception|\Throwable $exception = null)
+    public function collect(Request $request, Response $response, \Exception|\Throwable $exception = null): void
     {
         $this->data['time'] = $this->queryLogger->getElapsedTime();
         $this->data['nb_queries'] = count($this->queryLogger);
@@ -36,7 +36,7 @@ final class Neo4jDataCollector extends DataCollector
         });
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
         $this->queryLogger->reset();
@@ -45,7 +45,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * @return int
      */
-    public function getQueryCount()
+    public function getQueryCount(): int
     {
         return $this->data['nb_queries'];
     }
@@ -55,7 +55,7 @@ final class Neo4jDataCollector extends DataCollector
      *
      * @return array
      */
-    public function getStatements()
+    public function getStatements(): array
     {
         return $this->data['statements'];
     }
@@ -65,7 +65,7 @@ final class Neo4jDataCollector extends DataCollector
      *
      * @return array
      */
-    public function getFailedStatements()
+    public function getFailedStatements(): array
     {
         return $this->data['failed_statements'];
     }
@@ -73,7 +73,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * @return float
      */
-    public function getTime()
+    public function getTime(): float
     {
         return $this->data['time'];
     }
@@ -81,7 +81,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * @return float
      */
-    public function getTimeForQuery()
+    public function getTimeForQuery(): float
     {
         return $this->data['time'];
     }
@@ -89,7 +89,7 @@ final class Neo4jDataCollector extends DataCollector
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'neo4j';
     }

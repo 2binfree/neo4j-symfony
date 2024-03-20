@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neo4j\Neo4jBundle\Collector;
 
+use Countable;
 use GraphAware\Bolt\Result\Result;
 use GraphAware\Common\Cypher\StatementInterface;
 use GraphAware\Common\Result\StatementResult as StatementResultInterface;
@@ -13,27 +14,27 @@ use GraphAware\Neo4j\Client\Exception\Neo4jExceptionInterface;
 /**
  * @author Xavier Coureau <xavier@pandawan-technology.com>
  */
-class QueryLogger implements \Countable
+class QueryLogger implements Countable
 {
     /**
      * @var int
      */
-    private $nbQueries = 0;
+    private int $nbQueries = 0;
 
     /**
      * @var array
      */
-    private $statements = [];
+    private array $statements = [];
 
     /**
      * @var array
      */
-    private $statementsHash = [];
+    private array $statementsHash = [];
 
     /**
      * @param StatementInterface $statement
      */
-    public function record(StatementInterface $statement)
+    public function record(StatementInterface $statement): void
     {
         $statementText = $statement->text();
         $statementParams = json_encode($statement->parameters());
@@ -66,7 +67,7 @@ class QueryLogger implements \Countable
     /**
      * @param StatementResultInterface $statementResult
      */
-    public function finish(StatementResultInterface $statementResult)
+    public function finish(StatementResultInterface $statementResult): void
     {
         $scheme = 'Http';
         if ($statementResult instanceof Result) {
@@ -96,7 +97,7 @@ class QueryLogger implements \Countable
         ]);
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->nbQueries = 0;
         $this->statements = [];
@@ -106,7 +107,7 @@ class QueryLogger implements \Countable
     /**
      * @param Neo4jExceptionInterface $exception
      */
-    public function logException(Neo4jExceptionInterface $exception)
+    public function logException(Neo4jExceptionInterface $exception): void
     {
         $idx = $this->nbQueries - 1;
         $this->statements[$idx] = array_merge($this->statements[$idx], [
@@ -120,7 +121,7 @@ class QueryLogger implements \Countable
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count():int
     {
         return $this->nbQueries;
     }
@@ -128,7 +129,7 @@ class QueryLogger implements \Countable
     /**
      * @return array[]
      */
-    public function getStatements()
+    public function getStatements(): array
     {
         return $this->statements;
     }
@@ -136,7 +137,7 @@ class QueryLogger implements \Countable
     /**
      * @return array
      */
-    public function getStatementsHash()
+    public function getStatementsHash(): array
     {
         return $this->statementsHash;
     }
@@ -144,7 +145,7 @@ class QueryLogger implements \Countable
     /**
      * @return int
      */
-    public function getElapsedTime()
+    public function getElapsedTime(): int
     {
         $time = 0;
 
@@ -159,9 +160,9 @@ class QueryLogger implements \Countable
         return $time;
     }
 
-    private function statisticsToArray(StatementStatisticsInterface $statementStatistics)
+    private function statisticsToArray(StatementStatisticsInterface $statementStatistics): array
     {
-        $data = [
+        return [
             'contains_updates' => $statementStatistics->containsUpdates(),
             'nodes_created' => $statementStatistics->nodesCreated(),
             'nodes_deleted' => $statementStatistics->nodesDeleted(),
@@ -175,7 +176,5 @@ class QueryLogger implements \Countable
             'constraints_added' => $statementStatistics->constraintsAdded(),
             'constraints_removed' => $statementStatistics->constraintsRemoved(),
         ];
-
-        return $data;
     }
 }

@@ -16,7 +16,7 @@ class LoggerSubscriber implements EventSubscriberInterface
     /**
      * @var QueryLogger
      */
-    private $queryLogger;
+    private QueryLogger $queryLogger;
 
     /**
      * @param QueryLogger $queryLogger
@@ -29,7 +29,7 @@ class LoggerSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Neo4jClientEvents::NEO4J_PRE_RUN => 'onPreRun',
@@ -41,7 +41,7 @@ class LoggerSubscriber implements EventSubscriberInterface
     /**
      * @param PreRunEvent $event
      */
-    public function onPreRun(PreRunEvent $event)
+    public function onPreRun(PreRunEvent $event): void
     {
         foreach ($event->getStatements() as $statement) {
             $this->queryLogger->record($statement);
@@ -51,7 +51,7 @@ class LoggerSubscriber implements EventSubscriberInterface
     /**
      * @param PostRunEvent $event
      */
-    public function onPostRun(PostRunEvent $event)
+    public function onPostRun(PostRunEvent $event): void
     {
         foreach ($event->getResults() as $result) {
             $this->queryLogger->finish($result);
@@ -61,7 +61,7 @@ class LoggerSubscriber implements EventSubscriberInterface
     /**
      * @param FailureEvent $event
      */
-    public function onFailure(FailureEvent $event)
+    public function onFailure(FailureEvent $event): void
     {
         $this->queryLogger->logException($event->getException());
     }

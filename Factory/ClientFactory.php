@@ -14,15 +14,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 final class ClientFactory
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private ?EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var ConnectionManager
-     */
-    private $connectionManager;
+    private ConnectionManager $connectionManager;
 
     /**
      * @param ConnectionManager             $connectionManager
@@ -37,7 +31,7 @@ final class ClientFactory
     /**
      * Build an Client form multiple connection.
      *
-     * @param string $names
+     * @param array $names
      *
      * @return ClientInterface
      */

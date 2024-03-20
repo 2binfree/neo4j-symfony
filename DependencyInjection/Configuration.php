@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neo4j\Neo4jBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -24,12 +26,12 @@ class Configuration implements ConfigurationInterface
      *
      * @var bool
      */
-    private $debug;
+    private bool $debug;
 
     /**
      * @param bool $debug
      */
-    public function __construct($debug)
+    public function __construct(bool $debug)
     {
         $this->debug = (bool) $debug;
     }
@@ -37,7 +39,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('neo4j');
         // Keep compatibility with symfony/config < 4.2

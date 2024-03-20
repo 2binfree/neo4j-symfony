@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Neo4j\Neo4jBundle\DependencyInjection;
 
+use Exception;
 use GraphAware\Bolt\Driver as BoltDriver;
 use GraphAware\Neo4j\Client\ClientInterface;
 use GraphAware\Neo4j\Client\Connection\Connection;
-use GraphAware\Neo4j\OGM\EntityManager;
 use GraphAware\Neo4j\Client\HttpDriver\Driver as HttpDriver;
-use GraphAware\Neo4j\OGM\EntityManagerInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -27,8 +25,9 @@ class Neo4jExtension extends Extension
 {
     /**
      * {@inheritdoc}
+     * @throws Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -38,13 +37,6 @@ class Neo4jExtension extends Extension
 
         $this->handleConnections($config, $container);
         $clientServiceIds = $this->handleClients($config, $container);
-
-        if ($this->validateEntityManagers($config)) {
-            $loader->load('entity_manager.xml');
-            $this->handleEntityManagers($config, $container, $clientServiceIds);
-            $container->setAlias('neo4j.entity_manager', 'neo4j.entity_manager.default');
-            $container->setAlias(EntityManagerInterface::class, 'neo4j.entity_manager.default');
-        }
 
         // add aliases for the default services
         $container->setAlias('neo4j.connection', 'neo4j.connection.default');
@@ -107,7 +99,7 @@ class Neo4jExtension extends Extension
 
             $definition = class_exists(ChildDefinition::class)
                 ? new ChildDefinition('neo4j.client.abstract')
-                : new DefinitionDecorator('neo4j.client.abstract');
+                : new Definition('neo4j.client.abstract');
 
             $container
                 ->setDefinition($serviceId, $definition)
@@ -120,46 +112,10 @@ class Neo4jExtension extends Extension
     /**
      * @param array            $config
      * @param ContainerBuilder $container
-     * @param array            $clientServiceIds
      *
-     * @return array
+     * @return void with service ids
      */
-    private function handleEntityManagers(array &$config, ContainerBuilder $container, array $clientServiceIds): array
-    {
-        $serviceIds = [];
-        foreach ($config['entity_managers'] as $name => $data) {
-            $serviceIds[] = $serviceId = sprintf('neo4j.entity_manager.%s', $name);
-            $clientName = $data['client'];
-            if (empty($clientServiceIds[$clientName])) {
-                throw new InvalidConfigurationException(sprintf(
-                    'EntityManager "%s" is configured to use client named "%s" but there is no such client',
-                    $name,
-                    $clientName
-                ));
-            }
-
-            $definition = class_exists(ChildDefinition::class)
-                ? new ChildDefinition('neo4j.entity_manager.abstract')
-                : new DefinitionDecorator('neo4j.entity_manager.abstract');
-
-            $container
-                ->setDefinition($serviceId, $definition)
-                ->setArguments([
-                    $container->getDefinition($clientServiceIds[$clientName]),
-                    empty($data['cache_dir']) ? $container->getParameter('kernel.cache_dir').'/neo4j' : $data['cache_dir'],
-                ]);
-        }
-
-        return $serviceIds;
-    }
-
-    /**
-     * @param array            $config
-     * @param ContainerBuilder $container
-     *
-     * @return array with service ids
-     */
-    private function handleConnections(array &$config, ContainerBuilder $container): array
+    private function handleConnections(array &$config, ContainerBuilder $container): void
     {
         $serviceIds = [];
         $firstName = null;
@@ -186,7 +142,6 @@ class Neo4jExtension extends Extension
         }
         $connectionManager->addMethodCall('setMaster', [$firstName]);
 
-        return $serviceIds;
     }
 
     /**
@@ -219,38 +174,12 @@ class Neo4jExtension extends Extension
      *
      * @return int
      */
-    private function getPort(array $config)
+    private function getPort(array $config): int
     {
         if (isset($config['port'])) {
             return $config['port'];
         }
 
         return 'http' == $config['scheme'] ? HttpDriver::DEFAULT_HTTP_PORT : BoltDriver::DEFAULT_TCP_PORT;
-    }
-
-    /**
-     * Make sure the EntityManager is installed if we have configured it.
-     *
-     * @param array &$config
-     *
-     * @return bool true if "graphaware/neo4j-php-ogm" is installed
-     *
-     * @thorws \LogicException if EntityManagers os not installed but they are configured.
-     */
-    private function validateEntityManagers(array &$config): bool
-    {
-        $dependenciesInstalled = class_exists(EntityManager::class);
-        $entityManagersConfigured = !empty($config['entity_managers']);
-
-        if ($dependenciesInstalled && !$entityManagersConfigured) {
-            // Add default entity manager if none set.
-            $config['entity_managers']['default'] = ['client' => 'default'];
-        } elseif (!$dependenciesInstalled && $entityManagersConfigured) {
-            throw new \LogicException(
-                'You need to install "graphaware/neo4j-php-ogm" to be able to use the EntityManager'
-            );
-        }
-
-        return $dependenciesInstalled;
     }
 }
