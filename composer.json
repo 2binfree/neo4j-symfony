@@ -26,15 +26,15 @@
     ],
     "require": {
         "php": "^8.2",
-        "tobinfree/neo4j-bolt": "^1.11.2",
-        "tobinfree/neo4j-php-client": "^4.8.8",
-        "symfony/dependency-injection": "6.3.*",
-        "symfony/framework-bundle": "6.3.*",
-        "symfony/http-kernel": "6.3.*",
+        "tobinfree/neo4j-bolt": "^1.11.3",
+        "tobinfree/neo4j-php-client": "^4.8.9",
+        "symfony/dependency-injection": "6.4.*",
+        "symfony/framework-bundle": "6.4.*",
+        "symfony/http-kernel": "6.4.*",
         "twig/twig": "^1.18 || ^2.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "6.3.*",
+        "symfony/phpunit-bridge": "6.4.*",
         "matthiasnoback/symfony-dependency-injection-test": "^4.3"
     },
     "autoload": {
